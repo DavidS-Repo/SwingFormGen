@@ -27,7 +27,7 @@ To get started with SwingFormGen, follow these steps:
 4. Start designing your dynamic forms and enjoy the flexibility and simplicity offered by SwingFormGen.
 
 Alternatively, you can download the pre-compiled JAR executable from the repository and run it directly without the need to compile the source code.
-/DavidS-Repo/SwingFormGen/raw/main/FormGenerator.jar
+(https://github.com//DavidS-Repo/SwingFormGen/raw/main/FormGenerator.jar)
 
 ## Contributions
 
