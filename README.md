@@ -1,26 +1,26 @@
-## SwingFormGen - Dynamic Form Generator
+## SwingFormGen - Dynamic HTML Generator
 
-The **SwingFormGen** is a Java Swing application that allows you to generate dynamic forms with ease.
+The **SwingFormGen** is a Java Swing application that allows you to generate dynamic HTML templates with ease.
 
 ### Features
 
-- Create dynamic fields and static HTML sections for your form.
+- Create dynamic fields and static HTML sections for your page.
 - Add, move, and remove dynamic fields or static HTML sections.
-- Save your form as an HTML file.
-- Save and load form templates.
+- Save your inputs as an HTML file.
+- Save and load HTML templates.
 
 ### How to Use
 
 1. Launch the application by running the `FormGenerator` class.
-2. The main window will appear with a title field and a panel to add form elements.
-3. Enter a title for your form in the title field.
+2. The main window will appear with a title field and a panel to add elements.
+3. Enter a title for your webpage in the title field.
 4. To add a dynamic field, click the "Add Dynamic Field" button. This will add a text field where you can enter the label for the field.
 5. To add a static HTML section, click the "Add Static HTML" button. This will add a text area where you can enter HTML content.
-6. Use the "Move Up" and "Move Down" buttons to change the order of the form elements.
-7. Use the "Remove" button to delete a form element.
-8. To save your form as an HTML file, click the "Save HTML" button. Choose a location to save the file and provide a name.
-9. To save the form template, click the "Save Template" button. Choose a location to save the template file and provide a name.
-10. To load a form template, click the "Load Template" button. Select the template file to load the saved form configuration.
+6. Use the "Move Up" and "Move Down" buttons to change the order of the tile elements.
+7. Use the "Remove" button to delete a tile element.
+8. To save your data as an HTML file, click the "Save HTML" button. Choose a location to save the file and provide a name.
+9. To save the html template, click the "Save Template" button. Choose a location to save the template file and provide a name.
+10. To load a html template, click the "Load Template" button. Select the template file to load the saved template configuration.
 
 ### Requirements
 
