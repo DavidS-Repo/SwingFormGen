@@ -8,63 +8,72 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.*;
 
 
 
 public class FormGenerator implements ActionListener, DocumentListener {
-	private JFrame frame;
-	private JTextField titleField;
-	private JPanel elementsPanel;
-	private List<JTextField> dynamicFields;
-	private List<JTextArea> staticHTMLAreas;
+    private JFrame frame;
+    private JTextField titleField;
+    private JPanel elementsPanel;
+    private List<JTextField> dynamicFields;
+    private List<JTextArea> staticHTMLAreas;
+    private JComboBox<String> themeComboBox;
 
-	public FormGenerator() {
-		try {
-			UIManager.setLookAndFeel(new FlatDarkLaf());
-		} catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		frame = new JFrame("Form Generator");
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    JPanel contentPanel = new JPanel(new BorderLayout(20, 20));
-	    contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-	    frame.setContentPane(contentPanel);
-		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel titleLabel = new JLabel("Title:");
-		titleField = new JTextField(60);
-		titleField.getDocument().addDocumentListener(this);
-		titlePanel.add(titleLabel);
-		titlePanel.add(titleField);
+    public FormGenerator() {
+        try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		addButton(buttonPanel, "Add Dynamic Field", this);
-		addButton(buttonPanel, "Add Static HTML", this);
-		addButton(buttonPanel, "Save HTML", this);
-		addButton(buttonPanel, "Save Template", this);
-		addButton(buttonPanel, "Load Template", this);
-
-		elementsPanel = new JPanel();
-		elementsPanel.setLayout(new BoxLayout(elementsPanel, BoxLayout.Y_AXIS));
-		JScrollPane elementsScrollPane = new JScrollPane(elementsPanel);
-		elementsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		elementsScrollPane.setPreferredSize(new Dimension(400, 200));
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, elementsScrollPane, null);
-		splitPane.setResizeWeight(0.5);
-		JPanel editorPanel = new JPanel(new BorderLayout());
-		editorPanel.add(splitPane, BorderLayout.CENTER);
-		contentPanel.add(titlePanel, BorderLayout.NORTH);
-		contentPanel.add(buttonPanel, BorderLayout.SOUTH);
-		contentPanel.add(editorPanel, BorderLayout.CENTER);
-		dynamicFields = new ArrayList<>();
-		staticHTMLAreas = new ArrayList<>();
-		frame.setSize(800, 600);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-	}
+        frame = new JFrame("Form Generator");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel contentPanel = new JPanel(new BorderLayout(20, 20));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        frame.setContentPane(contentPanel);
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        JPanel titleFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel titleLabel = new JLabel("Title:");
+        titleField = new JTextField(45);
+        titleField.getDocument().addDocumentListener(this);
+        titleFieldPanel.add(titleLabel);
+        titleFieldPanel.add(titleField);
+        titlePanel.add(titleFieldPanel, BorderLayout.CENTER);
+        JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel themeLabel = new JLabel("Themes:");
+        String[] themes = {"FlatLaf Light", "FlatLaf Dark", "FlatLaf IntelliJ", "FlatLaf Darcula"};
+        themeComboBox = new JComboBox<>(themes);
+        themeComboBox.addActionListener(this);
+        themePanel.add(themeLabel);
+        themePanel.add(themeComboBox);
+        titlePanel.add(themePanel, BorderLayout.EAST);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        addButton(buttonPanel, "Add Dynamic Field", this);
+        addButton(buttonPanel, "Add Static HTML", this);
+        addButton(buttonPanel, "Save HTML", this);
+        addButton(buttonPanel, "Save Template", this);
+        addButton(buttonPanel, "Load Template", this);
+        elementsPanel = new JPanel();
+        elementsPanel.setLayout(new BoxLayout(elementsPanel, BoxLayout.Y_AXIS));
+        JScrollPane elementsScrollPane = new JScrollPane(elementsPanel);
+        elementsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        elementsScrollPane.setPreferredSize(new Dimension(400, 200));
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, elementsScrollPane, null);
+        splitPane.setResizeWeight(0.5);
+        JPanel editorPanel = new JPanel(new BorderLayout());
+        editorPanel.add(splitPane, BorderLayout.CENTER);
+        contentPanel.add(titlePanel, BorderLayout.NORTH);
+        contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+        contentPanel.add(editorPanel, BorderLayout.CENTER);
+        dynamicFields = new ArrayList<>();
+        staticHTMLAreas = new ArrayList<>();
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 
 	private void addButton(JPanel panel, String text, ActionListener listener) {
 		JButton button = new JButton(text);
@@ -352,10 +361,38 @@ public class FormGenerator implements ActionListener, DocumentListener {
 			saveTemplateToFile();
 		} else if (command.equals("Load Template")) {
 			loadTemplateFromFile();
-		}
+		} else if (e.getSource() == themeComboBox) {
+            changeTheme();
+        }
 		elementsPanel.revalidate();
 		elementsPanel.repaint();
 	}
+	
+	private void changeTheme() {
+        String theme = (String) themeComboBox.getSelectedItem();
+        try {
+            switch (theme) {
+                case "FlatLaf Light":
+                    UIManager.setLookAndFeel(new FlatLightLaf());
+                    break;
+                case "FlatLaf Dark":
+                    UIManager.setLookAndFeel(new FlatDarkLaf());
+                    break;
+                case "FlatLaf IntelliJ":
+                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
+                    break;
+                case "FlatLaf Darcula":
+                    UIManager.setLookAndFeel(new FlatDarculaLaf());
+                    break;
+                default:
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    break;
+            }
+            SwingUtilities.updateComponentTreeUI(frame);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
