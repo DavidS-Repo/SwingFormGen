@@ -24,7 +24,7 @@ The **SwingFormGen** is a Java Swing application that allows you to generate dyn
 
 ### Requirements
 
-- Java Development Kit (JDK) 8 or above.
+- Java Development Kit (JDK) 14 or above.
 - Java Swing library.
 - FlatLaf library for the FlatDarkLaf look and feel.
 
