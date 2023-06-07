@@ -228,39 +228,54 @@ public class FormGenerator implements ActionListener, DocumentListener {
 	}
 
 	private void loadTemplateFromFile() {
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setDialogTitle("Load Template");
-		fileChooser.setFileFilter(new FileNameExtensionFilter("Template Files", "txt"));
-		int userSelection = fileChooser.showOpenDialog(frame);
-		if (userSelection == JFileChooser.APPROVE_OPTION) {
-			File fileToLoad = fileChooser.getSelectedFile();
-			try (BufferedReader reader = new BufferedReader(new FileReader(fileToLoad))) {
-				clearAllFields();
-				String line;
-				boolean isFirstLine = true;
-				while ((line = reader.readLine()) != null) {
-					if (isFirstLine) {
-						titleField.setText(line);
-						isFirstLine = false;
-					} else {
-						String[] parts = line.split("\\|");
-						if (parts.length >= 3) {
-							if (parts[0].equalsIgnoreCase("DynamicTextField")) {
-								String fieldValue = parts[2];
-								addDynamicField("Dynamic Field:", fieldValue, userSelection);
-							} else if (parts[0].equalsIgnoreCase("StaticTextField")) {
-								String html = parts[2];
-								addStaticHTML(html, userSelection);
-							}
-						}
-					}
-				}
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(frame, "Error loading template: " + e.getMessage(),
-						"Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
+	    JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setDialogTitle("Load Template");
+	    fileChooser.setFileFilter(new FileNameExtensionFilter("Template Files", "txt"));
+	    int userSelection = fileChooser.showOpenDialog(frame);
+	    if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        File fileToLoad = fileChooser.getSelectedFile();
+	        try (BufferedReader reader = new BufferedReader(new FileReader(fileToLoad))) {
+	            clearAllFields();
+	            String line;
+	            boolean isFirstLine = true;
+	            StringBuilder currentFieldText = new StringBuilder();
+	            while ((line = reader.readLine()) != null) {
+	                if (isFirstLine) {
+	                    titleField.setText(line);
+	                    isFirstLine = false;
+	                } else {
+	                    if (line.startsWith("DynamicTextField|") || line.startsWith("StaticTextField|")) {
+	                        if (currentFieldText.length() > 0) {
+	                            processLoadedField(currentFieldText.toString(), userSelection);
+	                            currentFieldText = new StringBuilder();
+	                        }
+	                    }
+	                    currentFieldText.append(line).append("\n");
+	                }
+	            }
+	            if (currentFieldText.length() > 0) {
+	                processLoadedField(currentFieldText.toString(), userSelection);
+	            }
+	        } catch (IOException e) {
+	            JOptionPane.showMessageDialog(frame, "Error loading template: " + e.getMessage(),
+	                    "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
 	}
+
+	private void processLoadedField(String fieldText, int userSelection) {
+	    String[] parts = fieldText.split("\\|");
+	    if (parts.length >= 3) {
+	        if (parts[0].equalsIgnoreCase("DynamicTextField")) {
+	            String fieldValue = parts[2].trim();
+	            addDynamicField("Dynamic Field:", fieldValue, userSelection);
+	        } else if (parts[0].equalsIgnoreCase("StaticTextField")) {
+	            String html = parts[2].trim();
+	            addStaticHTML(html, userSelection);
+	        }
+	    }
+	}
+
 
 	private void saveTemplateToFile() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -330,7 +345,6 @@ public class FormGenerator implements ActionListener, DocumentListener {
 		elementsPanel.revalidate();
 		elementsPanel.repaint();
 	}
-
 
 	private void changeTheme() {
 	    String theme = (String) themeComboBox.getSelectedItem();

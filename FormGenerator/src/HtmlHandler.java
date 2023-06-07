@@ -53,21 +53,23 @@ public class HtmlHandler {
 	}
 
 	public void saveHTMLToFile(String html, JFrame frame) {
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setDialogTitle("Save HTML");
-		fileChooser.setFileFilter(new FileNameExtensionFilter("HTML Files", "html"));
-		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fileChooser.setSelectedFile(new File("template.html"));
-		int userSelection = fileChooser.showSaveDialog(frame);
-		if (userSelection == JFileChooser.APPROVE_OPTION) {
-			File fileToSave = fileChooser.getSelectedFile();
-			try (PrintWriter writer = new PrintWriter(fileToSave)) {
-				writer.println(html);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(frame, "Error saving HTML file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
+	    JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setDialogTitle("Save HTML");
+	    fileChooser.setFileFilter(new FileNameExtensionFilter("HTML Files", "html"));
+	    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	    fileChooser.setSelectedFile(new File("template.html"));
+	    int userSelection = fileChooser.showSaveDialog(frame);
+	    if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        File fileToSave = fileChooser.getSelectedFile();
+	        try (PrintWriter writer = new PrintWriter(fileToSave)) {
+	            html = html.replace("\\n", "\n");
+	            writer.println(html);
+	        } catch (IOException e) {
+	            JOptionPane.showMessageDialog(frame, "Error saving HTML file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
 	}
+
 
 	public void addDynamicField(JPanel panel, JTextField textField) {
 		dynamicFields.add(textField);
