@@ -5,6 +5,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,83 +22,100 @@ public class FormGenerator implements ActionListener, DocumentListener {
 	private HtmlHandler htmlHandler;
 
 	public FormGenerator() {
-	    try {
-	        UIManager.setLookAndFeel(new FlatDarkLaf());
-	    } catch (UnsupportedLookAndFeelException e) {
-	        e.printStackTrace();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		try {
+			UIManager.setLookAndFeel(new FlatDarkLaf());
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	    frame = new JFrame("HTMLGen");
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    JPanel contentPanel = new JPanel(new BorderLayout(20, 20));
-	    contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-	    frame.setContentPane(contentPanel);
-	    
-	    // Title Panel
-	    JPanel titlePanel = new JPanel(new BorderLayout());
-	    
-	    // Title Field
-	    JPanel titleFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	    JLabel titleLabel = new JLabel("Page Title:");
-	    titleField = new JTextField(45);
-	    titleField.getDocument().addDocumentListener(this);
-	    titleFieldPanel.add(titleLabel);
-	    titleFieldPanel.add(titleField);
-	    titlePanel.add(titleFieldPanel, BorderLayout.CENTER);
-	    
-	    // Theme Panel
-	    JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	    JLabel themeLabel = new JLabel("Themes:");
-	    String[] themes = {"Dark", "Light"};
-	    themeComboBox = new JComboBox<>(themes);
-	    themeComboBox.addActionListener(this);
-	    themePanel.add(themeLabel);
-	    themePanel.add(themeComboBox);
-	    titlePanel.add(themePanel, BorderLayout.EAST);
-	    
-	    // Button Panel
-	    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	    addButton(buttonPanel, "Add Dynamic Field", this);
-	    addButton(buttonPanel, "Add Static HTML", this);
-	    addButton(buttonPanel, "Save HTML", this);
-	    addButton(buttonPanel, "Save Template", this);
-	    addButton(buttonPanel, "Load Template", this);
-	    
-	    // Elements Panel
-	    elementsPanel = new JPanel();
-	    elementsPanel.setLayout(new BoxLayout(elementsPanel, BoxLayout.Y_AXIS));
-	    JScrollPane elementsScrollPane = new JScrollPane(elementsPanel);
-	    elementsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-	    elementsScrollPane.setPreferredSize(new Dimension(400, 200));
-	    
-	    // Editor Panel
-	    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, elementsScrollPane, null);
-	    splitPane.setResizeWeight(0.5);
-	    JPanel editorPanel = new JPanel(new BorderLayout());
-	    editorPanel.add(splitPane, BorderLayout.CENTER);
-	    
-	    // Add components to content panel
-	    contentPanel.add(titlePanel, BorderLayout.NORTH);
-	    contentPanel.add(buttonPanel, BorderLayout.SOUTH);
-	    contentPanel.add(editorPanel, BorderLayout.CENTER);
-	    
-	    // Initialize variables
-	    dynamicFields = new ArrayList<>();
-	    staticHTMLAreas = new ArrayList<>();
-	    htmlHandler = new HtmlHandler();
-	    
-	    frame.setSize(800, 600);
-	    frame.setLocationRelativeTo(null);
-	    frame.setVisible(true);
+		frame = new JFrame("HTMLGen");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JPanel contentPanel = new JPanel(new BorderLayout(20, 20));
+		contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+		frame.setContentPane(contentPanel);
+
+		// Title Panel
+		JPanel titlePanel = new JPanel(new BorderLayout());
+
+		// Title Field
+		JPanel titleFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel titleLabel = new JLabel("Page Title:");
+		titleField = new JTextField(45);
+		titleField.getDocument().addDocumentListener(this);
+		titleFieldPanel.add(titleLabel);
+		titleFieldPanel.add(titleField);
+		titlePanel.add(titleFieldPanel, BorderLayout.CENTER);
+
+		// Theme Panel
+		JPanel themePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel themeLabel = new JLabel("Themes:");
+		String[] themes = {"Dark", "Light"};
+		themeComboBox = new JComboBox<>(themes);
+		themeComboBox.addActionListener(this);
+		themePanel.add(themeLabel);
+		themePanel.add(themeComboBox);
+		titlePanel.add(themePanel, BorderLayout.EAST);
+
+		// Button Panel
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		addButton(buttonPanel, "Add Dynamic Field", this);
+		addButton(buttonPanel, "Add Static HTML", this);
+		addButton(buttonPanel, "Save HTML", this);
+		addButton(buttonPanel, "Save Template", this);
+		addButton(buttonPanel, "Load Template", this);
+
+		// Elements Panel
+		elementsPanel = new JPanel();
+		elementsPanel.setLayout(new BoxLayout(elementsPanel, BoxLayout.Y_AXIS));
+		JScrollPane elementsScrollPane = new JScrollPane(elementsPanel);
+		elementsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		elementsScrollPane.setPreferredSize(new Dimension(400, 200));
+
+		// Editor Panel
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, elementsScrollPane, null);
+		splitPane.setResizeWeight(0.5);
+		JPanel editorPanel = new JPanel(new BorderLayout());
+		editorPanel.add(splitPane, BorderLayout.CENTER);
+
+		// Add components to content panel
+		contentPanel.add(titlePanel, BorderLayout.NORTH);
+		contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+		contentPanel.add(editorPanel, BorderLayout.CENTER);
+
+		// Initialize variables
+		dynamicFields = new ArrayList<>();
+		staticHTMLAreas = new ArrayList<>();
+		htmlHandler = new HtmlHandler();
+
+		frame.setSize(800, 600);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	private JPanel createDynamicFieldPanel() {
 		JPanel dynamicFieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JTextField textField = new JTextField(43);
-		textField.getDocument().addDocumentListener(this);
-		dynamicFieldPanel.add(new JLabel("Dynamic Field:"));
+		JTextField textField = new JTextField(54);
+		dynamicFieldPanel.add(new JLabel(""));
+		Dimension textFieldSize = textField.getPreferredSize();
+		textFieldSize.height = 44;
+		textField.setPreferredSize(textFieldSize);
+		textField.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (textField.getText().equals("Dynamic Field")) {
+					textField.setText("");
+				}
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (textField.getText().isEmpty()) {
+					textField.setText("Dynamic Field");
+				}
+			}
+		});
+		textField.setText("Dynamic Field");
 		dynamicFieldPanel.add(textField);
 		addMoveUpButton(dynamicFieldPanel);
 		addMoveDownButton(dynamicFieldPanel);
@@ -114,7 +133,7 @@ public class FormGenerator implements ActionListener, DocumentListener {
 		staticHTMLPanel.add(new JLabel("Static HTML:"), BorderLayout.NORTH);
 		staticHTMLPanel.add(scrollPane, BorderLayout.CENTER);
 		staticHTMLAreas.add(textArea);
-		staticHTMLPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 30));
+		staticHTMLPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		return staticHTMLPanel;
 	}
 
@@ -151,7 +170,10 @@ public class FormGenerator implements ActionListener, DocumentListener {
 				}
 			}
 		});
-		panel.add(moveUpButton);
+		JPanel moveButtonsPanel = new JPanel();
+		moveButtonsPanel.setLayout(new BoxLayout(moveButtonsPanel, BoxLayout.Y_AXIS));
+		moveButtonsPanel.add(moveUpButton);
+		panel.add(moveButtonsPanel);
 	}
 
 	private void addMoveDownButton(JPanel panel) {
@@ -181,11 +203,13 @@ public class FormGenerator implements ActionListener, DocumentListener {
 				}
 			}
 		});
-		panel.add(moveDownButton);
+		JPanel moveButtonsPanel = (JPanel) panel.getComponent(2);
+		moveButtonsPanel.add(moveDownButton);
 	}
 
 	private void addRemoveButton(JPanel panel) {
 		JButton removeButton = new JButton("Remove");
+		removeButton.setPreferredSize(new Dimension(removeButton.getPreferredSize().width, 44));
 		removeButton.addActionListener(e -> {
 			elementsPanel.remove(panel);
 			elementsPanel.revalidate();
@@ -203,9 +227,12 @@ public class FormGenerator implements ActionListener, DocumentListener {
 
 	private void addDynamicField(String label, String initialValue, int userSelection) {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel fieldLabel = new JLabel(label);
+		JLabel fieldLabel = new JLabel("");
 		panel.add(fieldLabel);
-		JTextField textField = new JTextField(initialValue, 43);
+		JTextField textField = new JTextField(initialValue, 54);
+		Dimension textFieldSize = textField.getPreferredSize();
+		textFieldSize.height = 44;
+		textField.setPreferredSize(textFieldSize);
 		panel.add(textField);
 		addMoveUpButton(panel);
 		addMoveDownButton(panel);
@@ -228,54 +255,53 @@ public class FormGenerator implements ActionListener, DocumentListener {
 	}
 
 	private void loadTemplateFromFile() {
-	    JFileChooser fileChooser = new JFileChooser();
-	    fileChooser.setDialogTitle("Load Template");
-	    fileChooser.setFileFilter(new FileNameExtensionFilter("Template Files", "txt"));
-	    int userSelection = fileChooser.showOpenDialog(frame);
-	    if (userSelection == JFileChooser.APPROVE_OPTION) {
-	        File fileToLoad = fileChooser.getSelectedFile();
-	        try (BufferedReader reader = new BufferedReader(new FileReader(fileToLoad))) {
-	            clearAllFields();
-	            String line;
-	            boolean isFirstLine = true;
-	            StringBuilder currentFieldText = new StringBuilder();
-	            while ((line = reader.readLine()) != null) {
-	                if (isFirstLine) {
-	                    titleField.setText(line);
-	                    isFirstLine = false;
-	                } else {
-	                    if (line.startsWith("DynamicTextField|") || line.startsWith("StaticTextField|")) {
-	                        if (currentFieldText.length() > 0) {
-	                            processLoadedField(currentFieldText.toString(), userSelection);
-	                            currentFieldText = new StringBuilder();
-	                        }
-	                    }
-	                    currentFieldText.append(line).append("\n");
-	                }
-	            }
-	            if (currentFieldText.length() > 0) {
-	                processLoadedField(currentFieldText.toString(), userSelection);
-	            }
-	        } catch (IOException e) {
-	            JOptionPane.showMessageDialog(frame, "Error loading template: " + e.getMessage(),
-	                    "Error", JOptionPane.ERROR_MESSAGE);
-	        }
-	    }
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Load Template");
+		fileChooser.setFileFilter(new FileNameExtensionFilter("Template Files", "txt"));
+		int userSelection = fileChooser.showOpenDialog(frame);
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			File fileToLoad = fileChooser.getSelectedFile();
+			try (BufferedReader reader = new BufferedReader(new FileReader(fileToLoad))) {
+				clearAllFields();
+				String line;
+				boolean isFirstLine = true;
+				StringBuilder currentFieldText = new StringBuilder();
+				while ((line = reader.readLine()) != null) {
+					if (isFirstLine) {
+						titleField.setText(line);
+						isFirstLine = false;
+					} else {
+						if (line.startsWith("DynamicTextField|") || line.startsWith("StaticTextField|")) {
+							if (currentFieldText.length() > 0) {
+								processLoadedField(currentFieldText.toString(), userSelection);
+								currentFieldText = new StringBuilder();
+							}
+						}
+						currentFieldText.append(line).append("\n");
+					}
+				}
+				if (currentFieldText.length() > 0) {
+					processLoadedField(currentFieldText.toString(), userSelection);
+				}
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(frame, "Error loading template: " + e.getMessage(),
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	private void processLoadedField(String fieldText, int userSelection) {
-	    String[] parts = fieldText.split("\\|");
-	    if (parts.length >= 3) {
-	        if (parts[0].equalsIgnoreCase("DynamicTextField")) {
-	            String fieldValue = parts[2].trim();
-	            addDynamicField("Dynamic Field:", fieldValue, userSelection);
-	        } else if (parts[0].equalsIgnoreCase("StaticTextField")) {
-	            String html = parts[2].trim();
-	            addStaticHTML(html, userSelection);
-	        }
-	    }
+		String[] parts = fieldText.split("\\|");
+		if (parts.length >= 3) {
+			if (parts[0].equalsIgnoreCase("DynamicTextField")) {
+				String fieldValue = parts[2].trim();
+				addDynamicField("Dynamic Field:", fieldValue, userSelection);
+			} else if (parts[0].equalsIgnoreCase("StaticTextField")) {
+				String html = parts[2].trim();
+				addStaticHTML(html, userSelection);
+			}
+		}
 	}
-
 
 	private void saveTemplateToFile() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -349,17 +375,19 @@ public class FormGenerator implements ActionListener, DocumentListener {
 	private void changeTheme() {
 	    String theme = (String) themeComboBox.getSelectedItem();
 	    try {
-	        switch (theme) {
-	            case "Light" -> UIManager.setLookAndFeel(new FlatLightLaf());
-	            case "Dark" -> UIManager.setLookAndFeel(new FlatDarkLaf());
-	            default -> UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	        if ("Light".equals(theme)) {
+	            UIManager.setLookAndFeel(new FlatLightLaf());
+	        } else if ("Dark".equals(theme)) {
+	            UIManager.setLookAndFeel(new FlatDarkLaf());
+	        } else {
+	            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	        }
 	        SwingUtilities.updateComponentTreeUI(frame);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 	}
-	
+
 	private void updateButtonsState() {
 		for (JTextField field : dynamicFields) {
 			if (!field.getText().isEmpty()) {
